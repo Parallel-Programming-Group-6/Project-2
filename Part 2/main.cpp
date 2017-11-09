@@ -15,6 +15,7 @@ using namespace std;
 
 static const int MAX_THREADS = 8;
 
+//Data types for index and number of threads
 struct passVals {
 	vector<vector<double> > *A;
 	vector<double> *b;
@@ -42,8 +43,12 @@ void *eliminate(void *args){
 }
 
 int main(){
+	
+	//for generating a random matrix
 	srand(time(NULL));
 	int N = rand() % 10 + 2;
+	
+	//Declare for timing
 	double startTime;
 	double endTime;
 	double serialTime;
@@ -60,13 +65,12 @@ int main(){
 		b[i] = rand() % 1000;
 	}
 
-	//cout << "\nPerforming gaussian elimination with the following matrix (A) and vector (b):\n\n";
+	//Print out original Matrix before transformations
 	cout << "\n\nOriginal Matrix:" << endl;
 	printMatrix(N, A, b);
 
 	//Create an array that can be used to pass the thread_indices to the pthread function
-
-    for(int numThreads = 1; numThreads <= MAX_THREADS; numThreads++){
+	for(int numThreads = 1; numThreads <= MAX_THREADS; numThreads++){
     	int index[numThreads];
 
     	for(int i = 0; i < numThreads; i++){
@@ -74,7 +78,7 @@ int main(){
 	    }
 	    startTime = Timer::currentSeconds();
     	for (int i = 0; i < N-1; i++){
-			partialPivot(N, A, b, i);
+			partialPivot(N, A, b, i); //declared in the header file
 			passVals.A = &A;
 			passVals.b = &b;
 			passVals.N = N;
@@ -103,8 +107,8 @@ int main(){
 
     cout << endl << endl;
     cout << "Reduced Matrix:" << endl;
-    printMatrix(N,A,b);
-	backSubstitution(N, A, b, &x);
-	printSolutionVector(x, N);
+    printMatrix(N,A,b); //declared in header file
+	backSubstitution(N, A, b, &x); // declared in the header file
+	printSolutionVector(x, N); // declared in header file
 	cout << endl << endl;
 }
